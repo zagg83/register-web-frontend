@@ -1,0 +1,4 @@
+/* App-level overrides (kept minimal). Layout and components live in index.css */
+#root {
+  min-height: 100vh;
+}

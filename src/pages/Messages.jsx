@@ -16,7 +16,7 @@ export default function Messages() {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(import.meta.env.VITE_API_URL + "/messages", {
+        const res = await fetch("/api/messages", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function Messages() {
   async function markMessageAsRead(messageId) {
     try {
       if (!messageId) return;
-      await fetch(import.meta.env.VITE_API_URL + "/markAsRead", {
+      await fetch("/api/markAsRead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +110,11 @@ export default function Messages() {
                         return Array.isArray(prev)
                           ? prev.map((it) =>
                               (it.id ?? it._k) === (m.id ?? i)
-                                ? { ...it, timeRead: new Date().toISOString(), unreadIndicator: false }
+                                ? {
+                                    ...it,
+                                    timeRead: new Date().toISOString(),
+                                    unreadIndicator: false,
+                                  }
                                 : it
                             )
                           : prev;
@@ -278,7 +282,12 @@ function renderQuill(text) {
 }
 
 const Main = styled.main`
-  background: linear-gradient(180deg, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0) 160px), #f8fafc;
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.7) 0px,
+      rgba(255, 255, 255, 0) 160px
+    ),
+    #f8fafc;
   min-height: 100vh;
   padding-bottom: 16px;
 `;
@@ -320,8 +329,12 @@ const Row = styled.div`
   border: 1px solid var(--border);
   border-radius: 12px;
   background: #fff;
-  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-  &:hover { background: #f8fafc; border-color: #e5e7eb; }
+  transition: background 0.12s ease, border-color 0.12s ease,
+    box-shadow 0.12s ease;
+  &:hover {
+    background: #f8fafc;
+    border-color: #e5e7eb;
+  }
   .rowBtn {
     display: block;
     width: 100%;
@@ -332,7 +345,9 @@ const Row = styled.div`
     cursor: pointer;
     border-radius: 12px;
   }
-  &[data-unread="true"] .rowBtn { box-shadow: 0 2px 10px rgba(59,130,246,0.08); }
+  &[data-unread="true"] .rowBtn {
+    box-shadow: 0 2px 10px rgba(59, 130, 246, 0.08);
+  }
   .top {
     display: flex;
     align-items: center;
@@ -359,7 +374,9 @@ const Row = styled.div`
     letter-spacing: 0.15px;
     padding-left: 14px; /* space for dot */
   }
-  &[data-unread="true"] .subject { color: #1e40af; }
+  &[data-unread="true"] .subject {
+    color: #1e40af;
+  }
   .subject::before {
     content: "";
     position: absolute;
@@ -371,15 +388,28 @@ const Row = styled.div`
     border-radius: 50%;
     background: #cbd5e1; /* muted for read */
   }
-  &[data-unread="true"] .subject::before { background: #3b82f6; }
-  .subject:hover { color: #1f2937; }
-  .chev { color: #64748b; transition: transform .15s ease; font-size: 1.1rem; }
-  .chev.open { transform: rotate(180deg); }
-  .dateLine { margin-top: 4px; }
+  &[data-unread="true"] .subject::before {
+    background: #3b82f6;
+  }
+  .subject:hover {
+    color: #1f2937;
+  }
+  .chev {
+    color: #64748b;
+    transition: transform 0.15s ease;
+    font-size: 1.1rem;
+  }
+  .chev.open {
+    transform: rotate(180deg);
+  }
+  .dateLine {
+    margin-top: 4px;
+  }
   .dateLine .date {
     color: #64748b;
     font-size: 0.9rem;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
   }
   .fromLine {
     margin-top: 2px;
@@ -388,11 +418,24 @@ const Row = styled.div`
     font-style: italic;
     opacity: 0.7;
   }
-  .details { padding: 0 12px 12px; }
-  .meta { color: #334155; font-size: 0.9rem; margin-top: 6px; }
-  .body { margin-top: 6px; color: #111827; }
-  .body ul { margin: 6px 0 0 18px; }
-  .body p { margin: 6px 0 0 0; }
+  .details {
+    padding: 0 12px 12px;
+  }
+  .meta {
+    color: #334155;
+    font-size: 0.9rem;
+    margin-top: 6px;
+  }
+  .body {
+    margin-top: 6px;
+    color: #111827;
+  }
+  .body ul {
+    margin: 6px 0 0 18px;
+  }
+  .body p {
+    margin: 6px 0 0 0;
+  }
 `;
 
 const Attach = styled.div`

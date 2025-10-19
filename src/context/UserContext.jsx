@@ -16,7 +16,7 @@ export const UserProvider = ({ children }) => {
     setUser(userObj);
     const fetchUser = async () => {
       try {
-        const response = await fetch(import.meta.env.VITE_API_URL + "/login", {
+        const response = await fetch("/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

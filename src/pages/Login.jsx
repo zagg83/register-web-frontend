@@ -20,7 +20,7 @@ export default function Login() {
 
     (async () => {
       try {
-        const res = await fetch(import.meta.env.VITE_API_URL + "/login", {
+        const res = await fetch("/api/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function Login() {
       setError("Please enter username and password");
       return;
     }
-    const response = await fetch(import.meta.env.VITE_API_URL + "/login", {
+    const response = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

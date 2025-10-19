@@ -23,7 +23,7 @@ export default function Grades() {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(import.meta.env.VITE_API_URL + "/grades", {
+        const res = await fetch("/api/grades", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -66,7 +66,9 @@ export default function Grades() {
     return () => {
       aborted = true;
       if (chartInstanceRef.current) {
-        try { chartInstanceRef.current.destroy(); } catch {}
+        try {
+          chartInstanceRef.current.destroy();
+        } catch {}
         chartInstanceRef.current = null;
       }
       clearTimeout(t);
@@ -86,7 +88,9 @@ export default function Grades() {
     if (!chartCanvasRef.current) return;
     if (!Array.isArray(items) || items.length === 0) {
       if (chartInstanceRef.current) {
-        try { chartInstanceRef.current.destroy(); } catch {}
+        try {
+          chartInstanceRef.current.destroy();
+        } catch {}
         chartInstanceRef.current = null;
       }
       return;
@@ -94,7 +98,9 @@ export default function Grades() {
     const { labels, data, yMin, yMax, ticks } = buildAverageSeries(items);
     if (!data.length) {
       if (chartInstanceRef.current) {
-        try { chartInstanceRef.current.destroy(); } catch {}
+        try {
+          chartInstanceRef.current.destroy();
+        } catch {}
         chartInstanceRef.current = null;
       }
       return;
@@ -137,16 +143,16 @@ export default function Grades() {
         normalized: true,
         scales: {
           x: { title: { display: true, text: "Date" } },
-          y: { 
-            title: { display: true, text: "Average" }, 
-            min: yMin, 
+          y: {
+            title: { display: true, text: "Average" },
+            min: yMin,
             max: yMax,
             ticks: {
               stepSize: ticks.length > 6 ? 1 : 0.5,
-              callback: function(value) {
-                return ticks.includes(value) ? value : '';
-              }
-            }
+              callback: function (value) {
+                return ticks.includes(value) ? value : "";
+              },
+            },
           },
         },
         plugins: {
@@ -165,7 +171,9 @@ export default function Grades() {
 
     return () => {
       if (chartInstanceRef.current) {
-        try { chartInstanceRef.current.destroy(); } catch {}
+        try {
+          chartInstanceRef.current.destroy();
+        } catch {}
         chartInstanceRef.current = null;
       }
     };
@@ -300,7 +308,7 @@ export default function Grades() {
         </List>
       )}
       {/* Average over time chart */}
-  {!loading && items.length > 0 && (
+      {!loading && items.length > 0 && (
         <ChartCard>
           <h2>Average over time</h2>
           <div className="chartWrap">
@@ -359,15 +367,15 @@ function SubjectChart({ subject, chartRefs, isOpen }) {
     // Build data for this subject
     const entries = subject.entries || [];
     const validEntries = entries
-      .filter(e => e.date && e.grade)
-      .map(e => ({ ...e, n: toNumber(e.grade) }))
-      .filter(e => Number.isFinite(e.n))
+      .filter((e) => e.date && e.grade)
+      .map((e) => ({ ...e, n: toNumber(e.grade) }))
+      .filter((e) => Number.isFinite(e.n))
       .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     if (validEntries.length === 0) return;
 
-    const labels = validEntries.map(() => '');
-    const data = validEntries.map(e => e.n);
+    const labels = validEntries.map(() => "");
+    const data = validEntries.map((e) => e.n);
 
     // Destroy existing chart
     if (chartInstanceRef.current) {
@@ -380,60 +388,62 @@ function SubjectChart({ subject, chartRefs, isOpen }) {
     const rect = canvas.getBoundingClientRect();
     canvas.width = Math.max(200, Math.floor(rect.width));
     canvas.height = Math.max(80, Math.floor(rect.height));
-    
+
     const ctx = canvas.getContext("2d");
     chartInstanceRef.current = new Chart(ctx, {
       type: "line",
       data: {
         labels,
-        datasets: [{
-          label: subject.subject,
-          data,
-          borderColor: "#2563eb",
-          backgroundColor: "rgba(37, 99, 235, 0.1)",
-          tension: 0.25,
-          pointRadius: 3,
-          pointHoverRadius: 5,
-          fill: true,
-        }],
+        datasets: [
+          {
+            label: subject.subject,
+            data,
+            borderColor: "#2563eb",
+            backgroundColor: "rgba(37, 99, 235, 0.1)",
+            tension: 0.25,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            fill: true,
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         animation: false,
         scales: {
-          x: { 
-            display: false
+          x: {
+            display: false,
           },
-          y: { 
+          y: {
             display: true,
             title: { display: false },
             min: 4,
             max: 10,
-            ticks: { maxTicksLimit: 4 }
+            ticks: { maxTicksLimit: 4 },
           },
         },
         plugins: {
           legend: { display: false },
           title: {
             display: true,
-            text: 'Grade Progress',
+            text: "Grade Progress",
             font: {
               size: 12,
-              weight: 'bold'
+              weight: "bold",
             },
-            color: '#64748b',
-            padding: 8
+            color: "#64748b",
+            padding: 8,
           },
-          tooltip: { 
+          tooltip: {
             enabled: true,
             callbacks: {
               title: (context) => `${subject.subject}`,
               label: (context) => {
                 const entry = validEntries[context.dataIndex];
                 return `Grade: ${context.parsed.y} (${formatDate(entry.date)})`;
-              }
-            }
+              },
+            },
           },
         },
         elements: {
@@ -480,23 +490,23 @@ function buildAverageSeries(subjects) {
     labels.push(formatDate(g.date));
     data.push(Number((sum / count).toFixed(2)));
   }
-  
+
   // Calculate dynamic Y-axis range
   const minVal = Math.min(...data);
   const maxVal = Math.max(...data);
   const range = maxVal - minVal;
   const padding = Math.max(0.5, range * 0.1); // 10% padding or minimum 0.5
-  
+
   const yMin = Math.max(1, Math.floor(minVal - padding));
   const yMax = Math.min(10, Math.ceil(maxVal + padding));
-  
+
   // Generate appropriate tick marks
-  const tickStep = (yMax - yMin) <= 2 ? 0.5 : 1;
+  const tickStep = yMax - yMin <= 2 ? 0.5 : 1;
   const ticks = [];
   for (let i = yMin; i <= yMax; i += tickStep) {
     ticks.push(Number(i.toFixed(1)));
   }
-  
+
   return { labels, data, yMin, yMax, ticks };
 }
 function mapGradeEntry(it) {

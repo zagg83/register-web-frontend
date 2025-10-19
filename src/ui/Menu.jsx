@@ -19,7 +19,7 @@ export default function Menu() {
     let aborted = false;
     async function fetchUnread() {
       try {
-        const res = await fetch(import.meta.env.VITE_API_URL + "/unread", {
+        const res = await fetch("/api/unread", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

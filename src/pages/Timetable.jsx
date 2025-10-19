@@ -17,7 +17,7 @@ export default function Timetable() {
         setLoading(true);
         setError("");
         console.log("/calendar POST startDate=", weekStart);
-        const res = await fetch(import.meta.env.VITE_API_URL + "/calendar", {
+        const res = await fetch("/api/calendar", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -161,7 +161,12 @@ function detectHoliday(node) {
 
 const Main = styled.main`
   width: 100%;
-  background: linear-gradient(180deg, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0) 160px), #f8fafc;
+  background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.7) 0px,
+      rgba(255, 255, 255, 0) 160px
+    ),
+    #f8fafc;
   min-height: 100vh;
   padding-bottom: 16px;
 `;

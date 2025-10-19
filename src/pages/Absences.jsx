@@ -16,7 +16,7 @@ export default function Absences() {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(import.meta.env.VITE_API_URL + "/absences", {
+        const res = await fetch("/api/absences", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

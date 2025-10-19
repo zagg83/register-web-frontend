@@ -27,21 +27,18 @@ export default function Home() {
     try {
       setErrorMsg("");
       setLoadingDash(true);
-      const response = await fetch(
-        import.meta.env.VITE_API_URL + "/dashboard",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-target": user.url,
-          },
-          body: JSON.stringify({
-            username: user.username,
-            password: user.password,
-            url: user.url,
-          }),
-        }
-      );
+      const response = await fetch("/api/dashboard", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-target": user.url,
+        },
+        body: JSON.stringify({
+          username: user.username,
+          password: user.password,
+          url: user.url,
+        }),
+      });
       const data = await response.json();
       console.log(data);
       setDashDays(Array.isArray(data) ? data : []);
@@ -70,7 +67,7 @@ export default function Home() {
     let aborted = false;
     async function fetchUnreadMessages() {
       try {
-        const res = await fetch(import.meta.env.VITE_API_URL + "/unread", {
+        const res = await fetch("/api/unread", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -87,8 +84,10 @@ export default function Home() {
         if (!aborted) {
           console.log("Unread messages:", data);
           // Filter for grade messages and parse them
-          const gradeMessages = Array.isArray(data) ? data.filter(msg => msg.type === "grade") : [];
-          const parsedGrades = gradeMessages.map(msg => {
+          const gradeMessages = Array.isArray(data)
+            ? data.filter((msg) => msg.type === "grade")
+            : [];
+          const parsedGrades = gradeMessages.map((msg) => {
             // Parse title: "Bewertung geändert · Betriebswirtschaftslehre · Abschlussbuchungen · 8+"
             const parts = msg.title.split(" · ");
             const subject = parts[1] || "Unknown Subject";
@@ -98,7 +97,7 @@ export default function Home() {
               subject,
               grade,
               timeSent: msg.timeSent,
-              title: msg.title
+              title: msg.title,
             };
           });
           setUnreadGrades(parsedGrades);
@@ -116,12 +115,10 @@ export default function Home() {
     };
   }, [user]);
 
-
-
   async function markGradeAsRead(messageId) {
     try {
       if (!messageId) return;
-      await fetch(import.meta.env.VITE_API_URL + "/markAsRead", {
+      await fetch("/api/markAsRead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -166,7 +163,7 @@ export default function Home() {
         return days;
       });
 
-      const res = await fetch(import.meta.env.VITE_API_URL + "/save-reminder", {
+      const res = await fetch("/api/save-reminder", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -208,22 +205,19 @@ export default function Home() {
       // If there's no server id (optimistic-only), we're done
       if (item == null || item.id == null) return true;
 
-      const res = await fetch(
-        import.meta.env.VITE_API_URL + "/delete-reminder",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-target": user.url,
-          },
-          body: JSON.stringify({
-            id: item.id,
-            username: user.username,
-            password: user.password,
-            url: user.url,
-          }),
-        }
-      );
+      const res = await fetch("/api/delete-reminder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-target": user.url,
+        },
+        body: JSON.stringify({
+          id: item.id,
+          username: user.username,
+          password: user.password,
+          url: user.url,
+        }),
+      });
       if (!res.ok) throw new Error(`Delete reminder failed: ${res.status}`);
       await res.json().catch(() => null);
       return true;
@@ -245,10 +239,12 @@ export default function Home() {
         </SectionHeader>
         {errorMsg && <ErrorMsg role="alert">{errorMsg}</ErrorMsg>}
         {unreadGrades.length > 0 && (
-          <GradeNotification onClick={() => {
-            setCurrentGradeIndex(0);
-            setShowGradeModal(true);
-          }}>
+          <GradeNotification
+            onClick={() => {
+              setCurrentGradeIndex(0);
+              setShowGradeModal(true);
+            }}
+          >
             <div className="icon">📊</div>
             <div className="content">
               <div className="title">New Grades Available</div>
@@ -277,7 +273,7 @@ export default function Home() {
           />
         )}
       </main>
-      
+
       {/* Grade Details Modal */}
       {showGradeModal && unreadGrades.length > 0 && (
         <GradeModal>
@@ -285,8 +281,8 @@ export default function Home() {
           <ModalContent>
             <ModalHeader>
               <h3>Grade Details</h3>
-              <button 
-                className="closeBtn" 
+              <button
+                className="closeBtn"
                 onClick={() => setShowGradeModal(false)}
                 aria-label="Close"
               >
@@ -313,7 +309,7 @@ export default function Home() {
               })()}
             </ModalBody>
             <ModalFooter>
-              <button 
+              <button
                 className="confirmBtn"
                 onClick={() => {
                   const current = unreadGrades[currentGradeIndex];
@@ -326,7 +322,9 @@ export default function Home() {
                   }
                 }}
               >
-                {currentGradeIndex < unreadGrades.length - 1 ? 'Next Grade' : 'Confirm All'}
+                {currentGradeIndex < unreadGrades.length - 1
+                  ? "Next Grade"
+                  : "Confirm All"}
               </button>
             </ModalFooter>
           </ModalContent>
@@ -490,7 +488,7 @@ const ModalContent = styled.div`
   max-height: 90vh;
   overflow: hidden;
   animation: slideIn 0.3s ease-out;
-  
+
   @keyframes slideIn {
     from {
       opacity: 0;
@@ -509,14 +507,14 @@ const ModalHeader = styled.div`
   justify-content: space-between;
   padding: 20px 24px 16px;
   border-bottom: 1px solid #e5e7eb;
-  
+
   h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 700;
     color: #1f2937;
   }
-  
+
   .closeBtn {
     background: none;
     border: none;
@@ -526,7 +524,7 @@ const ModalHeader = styled.div`
     padding: 4px;
     border-radius: 4px;
     transition: background-color 0.2s ease;
-    
+
     &:hover {
       background-color: #f3f4f6;
     }
@@ -535,31 +533,31 @@ const ModalHeader = styled.div`
 
 const ModalBody = styled.div`
   padding: 24px;
-  
+
   .gradeInfo {
     text-align: center;
     margin-bottom: 20px;
-    
+
     .subject {
       font-size: 1.5rem;
       font-weight: 700;
       color: #1f2937;
       margin-bottom: 12px;
     }
-    
+
     .grade {
       font-size: 3rem;
       font-weight: 800;
       color: #3b82f6;
       margin-bottom: 8px;
     }
-    
+
     .time {
       font-size: 0.9rem;
       color: #6b7280;
     }
   }
-  
+
   .progress {
     text-align: center;
     font-size: 0.9rem;
@@ -574,7 +572,7 @@ const ModalFooter = styled.div`
   padding: 16px 24px 24px;
   display: flex;
   justify-content: center;
-  
+
   .confirmBtn {
     background: linear-gradient(135deg, #3b82f6, #1d4ed8);
     color: white;
@@ -585,12 +583,12 @@ const ModalFooter = styled.div`
     font-size: 1rem;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    
+
     &:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
-    
+
     &:active {
       transform: translateY(0);
     }

@@ -1,6 +1,7 @@
-import { setCors, handleOptions, getSessCookiesFromBody } from "./_utils";
+import { setCors, handleOptions, getSessCookiesFromBody } from "./utils.js";
 
 export default async function handler(req, res) {
+  console.log("hi");
   setCors(res);
   if (handleOptions(req, res)) return;
   if (req.method !== "POST") {

@@ -3,7 +3,7 @@ import {
   handleOptions,
   getSessCookiesFromBody,
   cookieHeader,
-} from "./_utils";
+} from "./utils.js";
 import { startOfWeek, format } from "date-fns";
 
 export default async function handler(req, res) {

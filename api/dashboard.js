@@ -3,7 +3,7 @@ import {
   handleOptions,
   getSessCookiesFromBody,
   cookieHeader,
-} from "./_utils";
+} from "./utils.js";
 
 export default async function handler(req, res) {
   console.log("cookies");

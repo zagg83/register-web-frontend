@@ -1,4 +1,4 @@
-import { setCors, handleOptions } from "./_utils";
+import { setCors, handleOptions } from "./utils.js";
 
 export default async function handler(req, res) {
   setCors(res);
